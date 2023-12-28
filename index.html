@@ -1,13 +1,156 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Muhammed Acur</title>
+    <title>Yazma Hızı Testi</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: teal;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 20px;
+            color: #0f172a;
+        }
+
+        #testArea {
+            width: 80%;
+            margin: auto;
+            border: 1px solid #000;
+            padding: 10px;
+            font-family: monospace;
+            white-space: pre;
+            background-color: #fff;
+            margin-top: 20px;
+        }
+
+        #inputArea {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+            margin-top: 10px;
+        }
+
+        #timer, #results {
+            margin-top: 10px;
+        }
+
+        #resetButton {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        @media (min-width: 600px) {
+            #testArea {
+                width: 60%;
+            }
+        }
+    </style>
 </head>
-<body>
 
-    <h1>İleri Programlama Proje 1. Kısım</h1>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-8">
+        <h1 class="text-4xl font-bold text-blue-700 mb-4">Yazma Hızı Testi</h1>
+        <div id="testArea" class="bg-white border border-gray-300 p-4 rounded mb-4"></div>
+        <input type="text" id="inputArea" placeholder="Kelimeyi buraya yazın..."
+            class="w-80 p-2 border border-gray-300 rounded mb-4" />
+        <div id="timer" class="text-lg font-bold text-red-600">Kalan Süre: <span id="timeLeft">60</span> saniye</div>
+        <div id="results" class="text-lg mt-4">Doğru Kelimeler: <span id="correctWords" class="text-green-600">0</span>,
+            Yanlış Kelimeler: <span id="wrongWords" class="text-red-600">0</span></div>
+        <button id="resetButton" onclick="resetTest()">Testi Sıfırla</button>
+    </div>
 
+    <script>
+        const words = ["house", "tree", "cat", "table", "book", "sky", "sun", "moon", "star", "food", "water", "glasses", "bike", "bird", "park", "bag", "shoes", "door", "window", "computer", "phone", "coffee", "pen", "notebook", "color", "music", "movie", "sleep", "dream", "vacation", "school", "student", "teacher", "grade", "exam", "sports", "walk", "travel", "letter", "friend", "family", "money", "shopping", "market", "fruit", "vegetable", "health", "sick", "doctor", "medicine", "weather", "rain", "snow", "wind", "smile", "happiness", "sadness", "memory", "picture", "meal", "horse", "sea", "library", "television", "game", "garden", "breakfast", "lunch", "dinner", "night", "day", "hour", "time", "year", "month", "week", "day", "hour", "minute", "second", "pet", "dog", "mouse", "fish", "cookie", "cake", "ice cream", "chocolate", "candy", "fun", "museum", "art", "history"];
+
+        let correctWords = 0;
+        let wrongWords = 0;
+        let currentWordIndex = 0;
+        let timer = 60;
+        let interval;
+        let testStarted = false;
+
+        function startTest() {
+            interval = setInterval(() => {
+                if (timer > 0) {
+                    timer--;
+                    document.getElementById('timeLeft').textContent = timer;
+                } else {
+                    endTest();
+                }
+            }, 1000);
+        }
+
+        function endTest() {
+            clearInterval(interval);
+            document.getElementById('inputArea').disabled = true;
+            const wordsPerMinute = correctWords;
+            const accuracy = correctWords / (correctWords + wrongWords) * 100;
+            alert(`Yazma hızınız: ${wordsPerMinute} WPM\nDoğruluk oranı: ${accuracy.toFixed(2)}%`);
+        }
+
+        function checkWord(input) {
+            const currentWord = words[currentWordIndex];
+            if (input.trim() === currentWord) {
+                correctWords++;
+            } else {
+                wrongWords++;
+            }
+
+            currentWordIndex = Math.floor(Math.random() * words.length);
+            document.getElementById('testArea').textContent = words[currentWordIndex];
+            document.getElementById('correctWords').textContent = correctWords;
+            document.getElementById('wrongWords').textContent = wrongWords;
+            document.getElementById('inputArea').value = '';
+        }
+
+        function resetTest() {
+            clearInterval(interval);
+            document.getElementById('inputArea').disabled = false;
+            testStarted = false;
+            timer = 60;
+            correctWords = 0;
+            wrongWords = 0;
+            currentWordIndex = Math.floor(Math.random() * words.length);
+            document.getElementById('testArea').textContent = words[currentWordIndex];
+            document.getElementById('timeLeft').textContent = timer;
+            document.getElementById('correctWords').textContent = correctWords;
+            document.getElementById('wrongWords').textContent = wrongWords;
+            document.getElementById('inputArea').value = '';
+        }
+
+        document.getElementById('inputArea').addEventListener('keypress', function (event) {
+            if (!testStarted) {
+                testStarted = true;
+                startTest();
+            }
+
+            if (event.key === 'Enter') {
+                checkWord(this.value);
+            }
+        });
+
+        currentWordIndex = Math.floor(Math.random() * words.length);
+        document.getElementById('testArea').textContent = words[currentWordIndex];
+    </script>
 </body>
+
 </html>
